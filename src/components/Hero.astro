@@ -1,0 +1,100 @@
+---
+const theme = "Cybernetic Dreams: Where AI Meets Play";
+---
+
+<section class="relative min-h-screen flex items-center justify-center overflow-hidden py-20 px-4">
+  <div class="absolute inset-0 bg-gradient-to-br from-purple-900/20 to-blue-900/20 z-0"></div>
+  
+  <div class="relative z-10 text-center max-w-4xl mx-auto">
+    <h1 class="text-6xl md:text-8xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-blue-400 text-transparent bg-clip-text">
+      2025 Vibe Coding Game Jam
+    </h1>
+    
+    <p class="text-2xl md:text-3xl mb-8 text-gray-300">
+      {theme}
+    </p>
+    
+    <p class="text-xl mb-12 text-gray-400">
+      The first game jam for AI vibecoded games
+    </p>
+    
+    <div class="flex flex-col md:flex-row gap-6 justify-center items-center">
+      <a 
+        href="http://jam.pieter.com" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        class="px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full text-xl font-semibold hover:opacity-90 transition-opacity"
+      >
+        Submit Your Game
+      </a>
+      
+      <div class="text-gray-400">
+        <p class="text-lg">Submission Deadline</p>
+        <p class="text-xl font-semibold">April 1st, 2025</p>
+      </div>
+    </div>
+    
+    <a 
+      href="https://x.com/hashtag/vibejam" 
+      target="_blank" 
+      rel="noopener noreferrer"
+      class="group relative inline-flex items-center gap-3 mt-12 px-6 py-3 text-purple-400 hover:text-purple-300 transition-all duration-300 transform hover:translate-y-1"
+    >
+      <span class="text-xl font-semibold">#vibejam</span>
+      
+      <!-- Arrow with trail effect -->
+      <div class="relative">
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          class="h-6 w-6 transform -rotate-45 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300"
+          fill="none" 
+          viewBox="0 0 24 24" 
+          stroke="currentColor"
+        >
+          <path 
+            stroke-linecap="round" 
+            stroke-linejoin="round" 
+            stroke-width="2" 
+            d="M14 5l7 7m0 0l-7 7m7-7H3"
+          />
+        </svg>
+        
+        <!-- Glowing trail -->
+        <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div class="absolute inset-0 animate-ping">
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              class="h-6 w-6 transform -rotate-45 text-purple-400/30"
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor"
+            >
+              <path 
+                stroke-linecap="round" 
+                stroke-linejoin="round" 
+                stroke-width="2" 
+                d="M14 5l7 7m0 0l-7 7m7-7H3"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hover effect background -->
+      <div class="absolute inset-0 -z-10 rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-300 bg-gradient-to-r from-purple-400 to-blue-400 blur-lg"></div>
+    </a>
+  </div>
+</section>
+
+<style>
+  @keyframes ping {
+    75%, 100% {
+      transform: scale(2);
+      opacity: 0;
+    }
+  }
+  
+  .animate-ping {
+    animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+</style>

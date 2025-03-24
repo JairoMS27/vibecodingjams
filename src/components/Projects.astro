@@ -1,0 +1,135 @@
+---
+import ProjectCard from './ProjectCard.astro';
+import ProjectsFilter from './ProjectsFilter.astro';
+import { db } from '../lib/db';
+
+// Get all categories
+const categories = [
+  'Action',
+  'Adventure',
+  'Puzzle',
+  'Strategy',
+  'RPG',
+  'Simulation',
+  'Sports',
+  'Racing'
+];
+
+// Get all projects
+const projects = await db.getProjects();
+
+// Stats
+const totalProjects = projects.length;
+---
+
+<section id="projects" class="py-20 px-4 bg-gray-900/50">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-12">
+      <h2 class="text-4xl font-bold mb-4">Submitted Projects</h2>
+      <p class="text-gray-400">Discover {totalProjects} amazing games</p>
+    </div>
+
+    <ProjectsFilter categories={categories} />
+    
+    <div id="projectsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
+      {projects.map((project) => (
+        <ProjectCard project={project} />
+      ))}
+    </div>
+
+    <div id="noProjects" class="text-center py-20 hidden">
+      <h3 class="text-2xl font-semibold mb-4">No projects found</h3>
+      <p class="text-gray-400">Try adjusting your filters or search query</p>
+    </div>
+
+    <div class="text-center mt-16">
+      <a 
+        href="http://jam.pieter.com" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full text-xl font-semibold hover:opacity-90 transition-all transform hover:scale-105 group"
+      >
+        <span>Submit Your Game</span>
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          class="h-6 w-6 transform group-hover:translate-x-1 transition-transform" 
+          fill="none" 
+          viewBox="0 0 24 24" 
+          stroke="currentColor"
+        >
+          <path 
+            stroke-linecap="round" 
+            stroke-linejoin="round" 
+            stroke-width="2" 
+            d="M14 5l7 7m0 0l-7 7m7-7H3" 
+          />
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<script define:vars={{ projects }}>
+  const projectsGrid = document.getElementById('projectsGrid');
+  const noProjects = document.getElementById('noProjects');
+  const allProjects = document.querySelectorAll('.project-card');
+
+  function filterProjects({ category, sort, search }) {
+    const projectsData = projects;
+    let visibleProjects = [...allProjects];
+
+    // Category filter
+    if (category && category !== 'all') {
+      visibleProjects = visibleProjects.filter(card => {
+        const projectId = card.dataset.projectId;
+        const project = projectsData.find(p => p.id === projectId);
+        return project && project.category === category;
+      });
+    }
+
+    // Search filter
+    if (search) {
+      const searchLower = search.toLowerCase();
+      visibleProjects = visibleProjects.filter(card => {
+        const projectId = card.dataset.projectId;
+        const project = projectsData.find(p => p.id === projectId);
+        if (!project) return false;
+        const matchTitle = project.title.toLowerCase().includes(searchLower);
+        const matchDesc = project.description.toLowerCase().includes(searchLower);
+        return matchTitle || matchDesc;
+      });
+    }
+
+    // Apply visibility
+    allProjects.forEach(card => card.classList.add('hidden'));
+    visibleProjects.forEach(card => card.classList.remove('hidden'));
+
+    // Sort visible cards
+    if (sort) {
+      visibleProjects.sort((a, b) => {
+        const projectA = projectsData.find(p => p.id === a.dataset.projectId);
+        const projectB = projectsData.find(p => p.id === b.dataset.projectId);
+        if (!projectA || !projectB) return 0;
+
+        switch (sort) {
+          case 'oldest':
+            return new Date(projectA.created_at).getTime() - new Date(projectB.created_at).getTime();
+          default: // latest
+            return new Date(projectB.created_at).getTime() - new Date(projectA.created_at).getTime();
+        }
+      });
+
+      // Reorder DOM
+      visibleProjects.forEach(card => projectsGrid.appendChild(card));
+    }
+
+    // Toggle no results message
+    noProjects.classList.toggle('hidden', visibleProjects.length > 0);
+    projectsGrid.classList.toggle('hidden', visibleProjects.length === 0);
+  }
+
+  // Listen for filter events
+  window.addEventListener('filterProjects', (e) => {
+    filterProjects(e.detail);
+  });
+</script>

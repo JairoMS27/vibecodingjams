@@ -1,0 +1,299 @@
+---
+import { db } from '../lib/db';
+
+// Get projects directly from the server side
+const projects = await db.getProjects();
+---
+
+<section class="py-20 px-4 bg-gray-900/30">
+  <div class="max-w-7xl mx-auto text-center">
+    <h2 class="text-4xl font-bold mb-8 animate-fade-in">Feeling Lucky?</h2>
+    <p class="text-xl text-gray-300 mb-8 animate-fade-in-delay">Discover your next favorite game with just one click!</p>
+    
+    <button
+      id="luckyButton"
+      class="relative px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full text-xl font-semibold hover:opacity-90 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed group animate-bounce-slow"
+    >
+      <span class="relative z-10 flex items-center gap-2">
+        <span>I'm Feeling Lucky</span>
+        <svg class="w-6 h-6 animate-spin-slow" viewBox="0 0 24 24" fill="none">
+          <path d="M21.74 18.17L14.26 3.83a2 2 0 0 0-3.52 0L3.26 18.17A2 2 0 0 0 5.02 21h13.96a2 2 0 0 0 1.76-2.83z" fill="currentColor" class="opacity-50"/>
+        </svg>
+      </span>
+      
+      <!-- Animated background effects -->
+      <div class="absolute inset-0 -z-10 bg-gradient-to-r from-purple-600/50 to-blue-600/50 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+      <div class="absolute -inset-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full blur opacity-30 group-hover:opacity-60 animate-pulse transition-opacity"></div>
+      
+      <!-- Particle effects -->
+      <div class="particles absolute inset-0 pointer-events-none">
+        {Array.from({ length: 20 }).map((_, i) => (
+          <div class={`particle absolute w-1 h-1 bg-white rounded-full`}></div>
+        ))}
+      </div>
+    </button>
+  </div>
+</section>
+
+<!-- Modal -->
+<div 
+  id="luckyModal" 
+  class="fixed inset-0 bg-black/80 backdrop-blur-sm items-center justify-center p-4 z-50 hidden"
+  style="perspective: 1000px;"
+>
+  <div 
+    id="modalContent"
+    class="bg-gray-800/95 rounded-xl max-w-4xl w-full overflow-hidden relative mx-auto mt-20 shadow-2xl"
+    style="transform: rotateX(20deg) scale(0.8); opacity: 0; transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);"
+  >
+    <button
+      id="closeModal"
+      class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors z-10 bg-gray-900/80 p-2 rounded-full hover:rotate-90 transform duration-300"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="relative aspect-video md:aspect-auto overflow-hidden">
+        <img
+          id="modalImage"
+          src=""
+          alt=""
+          class="w-full h-full object-cover transform hover:scale-110 transition-transform duration-700"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent md:hidden"></div>
+        <div class="absolute top-4 left-4">
+          <span id="modalCategory" class="px-3 py-1 bg-gray-900/80 rounded-full text-sm font-medium"></span>
+        </div>
+      </div>
+
+      <div class="p-6 md:pr-8 flex flex-col">
+        <div id="contentSection" class="flex-1 space-y-6" style="opacity: 0; transform: translateY(20px); transition: all 0.5s ease-out;">
+          <h2 id="modalTitle" class="text-3xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 text-transparent bg-clip-text"></h2>
+          
+          <div class="space-y-6">
+            <div id="modalCreator" class="hidden">
+              <h3 class="text-xl font-semibold mb-2 text-purple-400">Creator</h3>
+              <a
+                id="modalCreatorLink"
+                href=""
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 text-gray-300 hover:text-white transition-colors group"
+              >
+                <span id="modalCreatorHandle"></span>
+                <svg viewBox="0 0 24 24" class="h-5 w-5 fill-current transform group-hover:rotate-12 transition-transform">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+              </a>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-semibold mb-2 text-purple-400">About</h3>
+              <p id="modalDescription" class="text-gray-300 leading-relaxed"></p>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-semibold mb-2 text-purple-400">Platforms</h3>
+              <div class="flex gap-2">
+                <span class="bg-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-600 transition-colors">Web Browser</span>
+                <span class="bg-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-600 transition-colors">WebGL</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="buttonsSection" class="flex gap-4 mt-8" style="opacity: 0; transform: translateY(20px); transition: all 0.5s ease-out 0.2s;">
+          <a
+            id="modalPlayButton"
+            href=""
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 px-6 rounded-lg text-center font-semibold hover:opacity-90 transition-all hover:scale-105 transform"
+          >
+            Play Now
+          </a>
+          <button
+            id="tryAnother"
+            class="flex-1 bg-gray-700 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-600 transition-all hover:scale-105 transform"
+          >
+            Try Another
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ projects }}>
+  // Get DOM elements
+  const modal = document.getElementById('luckyModal');
+  const modalContent = document.getElementById('modalContent');
+  const contentSection = document.getElementById('contentSection');
+  const buttonsSection = document.getElementById('buttonsSection');
+  const closeButton = document.getElementById('closeModal');
+  const luckyButton = document.getElementById('luckyButton');
+  const tryAnotherButton = document.getElementById('tryAnother');
+  const particles = document.querySelectorAll('.particle');
+  
+  function animateParticles() {
+    particles.forEach((particle, i) => {
+      const delay = i * 50;
+      const angle = (i / particles.length) * Math.PI * 2;
+      particle.style.setProperty('--x', Math.cos(angle));
+      particle.style.setProperty('--y', Math.sin(angle));
+      particle.style.animation = `particle 1s ease-out ${delay}ms`;
+      
+      particle.addEventListener('animationend', () => {
+        particle.style.animation = '';
+      });
+    });
+  }
+
+  function getRandomProject() {
+    const randomIndex = Math.floor(Math.random() * projects.length);
+    return projects[randomIndex];
+  }
+
+  function updateModal(project) {
+    document.getElementById('modalImage').src = project.thumbnail;
+    document.getElementById('modalImage').alt = project.title;
+    document.getElementById('modalCategory').textContent = project.category;
+    document.getElementById('modalTitle').textContent = project.title;
+    document.getElementById('modalDescription').textContent = project.description;
+    document.getElementById('modalPlayButton').href = project.play_url;
+
+    const creatorSection = document.getElementById('modalCreator');
+    const creatorHandle = document.getElementById('modalCreatorHandle');
+    const creatorLink = document.getElementById('modalCreatorLink');
+    
+    if (project.creator_x) {
+      creatorSection.classList.remove('hidden');
+      creatorHandle.textContent = project.creator_x;
+      creatorLink.href = `https://x.com/${project.creator_x.replace('@', '')}`;
+    } else {
+      creatorSection.classList.add('hidden');
+    }
+  }
+
+  function openModal() {
+    const project = getRandomProject();
+    updateModal(project);
+    
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+    
+    // Trigger animations
+    requestAnimationFrame(() => {
+      modalContent.style.transform = 'rotateX(0) scale(1)';
+      modalContent.style.opacity = '1';
+      contentSection.style.opacity = '1';
+      contentSection.style.transform = 'translateY(0)';
+      buttonsSection.style.opacity = '1';
+      buttonsSection.style.transform = 'translateY(0)';
+    });
+  }
+
+  function closeModal() {
+    modalContent.style.transform = 'rotateX(20deg) scale(0.8)';
+    modalContent.style.opacity = '0';
+    contentSection.style.opacity = '0';
+    contentSection.style.transform = 'translateY(20px)';
+    buttonsSection.style.opacity = '0';
+    buttonsSection.style.transform = 'translateY(20px)';
+    
+    setTimeout(() => {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.body.style.overflow = 'unset';
+    }, 500);
+  }
+
+  // Event listeners
+  luckyButton.addEventListener('click', () => {
+    animateParticles();
+    openModal();
+  });
+
+  closeButton.addEventListener('click', closeModal);
+  
+  tryAnotherButton.addEventListener('click', () => {
+    modalContent.style.transform = 'rotateX(20deg) scale(0.8)';
+    modalContent.style.opacity = '0';
+    
+    setTimeout(() => {
+      const project = getRandomProject();
+      updateModal(project);
+      
+      modalContent.style.transform = 'rotateX(0) scale(1)';
+      modalContent.style.opacity = '1';
+    }, 300);
+  });
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+      closeModal();
+    }
+  });
+</script>
+
+<style>
+  @keyframes bounce-slow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes spin-slow {
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate-bounce-slow {
+    animation: bounce-slow 3s infinite;
+  }
+
+  .animate-spin-slow {
+    animation: spin-slow 8s linear infinite;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-out forwards;
+  }
+
+  .animate-fade-in-delay {
+    animation: fade-in 0.5s ease-out 0.2s forwards;
+    opacity: 0;
+  }
+
+  .particle {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+  }
+
+  @keyframes particle {
+    0% {
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translate(
+        calc(-50% + var(--x) * 100px),
+        calc(-50% + var(--y) * 100px)
+      ) scale(1);
+      opacity: 0;
+    }
+  }
+</style>

@@ -1,0 +1,160 @@
+---
+interface Props {
+  projects: {
+    id: string;
+    title: string;
+    description: string;
+    thumbnail: string;
+    play_url: string;
+    creator_x?: string;
+    category: string;
+  }[];
+}
+
+const { projects } = Astro.props;
+---
+
+<div id="projectModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm items-center justify-center p-4 z-50 hidden">
+  <div class="bg-gray-800/95 rounded-xl max-w-4xl w-full overflow-hidden relative mx-auto mt-20">
+    <button
+      id="closeModal"
+      class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors z-10 bg-gray-900/80 p-2 rounded-full"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="relative aspect-video md:aspect-auto">
+        <img
+          id="modalImage"
+          src=""
+          alt=""
+          class="w-full h-full object-cover"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent md:hidden"></div>
+        <div class="absolute top-4 left-4">
+          <span id="modalCategory" class="px-3 py-1 bg-gray-900/80 rounded-full text-sm font-medium"></span>
+        </div>
+      </div>
+
+      <div class="p-6 md:pr-8 flex flex-col">
+        <div class="flex-1">
+          <h2 id="modalTitle" class="text-3xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 text-transparent bg-clip-text"></h2>
+          
+          <div class="space-y-6">
+            <div id="modalCreator" class="hidden">
+              <h3 class="text-xl font-semibold mb-2 text-purple-400">Creator</h3>
+              <a
+                id="modalCreatorLink"
+                href=""
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
+              >
+                <span id="modalCreatorHandle"></span>
+                <svg viewBox="0 0 24 24" class="h-5 w-5 fill-current">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+              </a>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-semibold mb-2 text-purple-400">About</h3>
+              <p id="modalDescription" class="text-gray-300 leading-relaxed"></p>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-semibold mb-2 text-purple-400">Platforms</h3>
+              <div class="flex gap-2">
+                <span class="bg-gray-700 px-3 py-1 rounded-full text-sm">Web Browser</span>
+                <span class="bg-gray-700 px-3 py-1 rounded-full text-sm">WebGL</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-4 mt-8">
+          <a
+            id="modalPlayButton"
+            href=""
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 px-6 rounded-lg text-center font-semibold hover:opacity-90 transition-opacity"
+          >
+            Play Now
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ projects }}>
+  const modal = document.getElementById('projectModal');
+  const closeButton = document.getElementById('closeModal');
+  
+  function openModal(projectId) {
+    const project = projects.find(p => p.id === projectId);
+    if (!project) return;
+
+    // Update modal content
+    document.getElementById('modalImage').src = project.thumbnail;
+    document.getElementById('modalImage').alt = project.title;
+    document.getElementById('modalCategory').textContent = project.category;
+    document.getElementById('modalTitle').textContent = project.title;
+    document.getElementById('modalDescription').textContent = project.description;
+    document.getElementById('modalPlayButton').href = project.play_url;
+
+    // Handle creator section
+    const creatorSection = document.getElementById('modalCreator');
+    const creatorHandle = document.getElementById('modalCreatorHandle');
+    const creatorLink = document.getElementById('modalCreatorLink');
+    
+    if (project.creator_x) {
+      creatorSection.classList.remove('hidden');
+      creatorHandle.textContent = project.creator_x;
+      creatorLink.href = `https://x.com/${project.creator_x.replace('@', '')}`;
+    } else {
+      creatorSection.classList.add('hidden');
+    }
+
+    // Show modal
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.style.overflow = 'unset';
+  }
+
+  // Event listeners
+  window.addEventListener('openProjectModal', (e) => {
+    openModal(e.detail.projectId);
+  });
+
+  // Close button click handler
+  closeButton.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    closeModal();
+  });
+
+  // Close on background click
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+
+  // Close on escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+      closeModal();
+    }
+  });
+</script>
