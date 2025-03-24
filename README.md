@@ -1,6 +1,8 @@
 # 🎮 Vibe Coding Game Jam 2025
 
-Welcome to the official repository of the Vibe Coding Game Jam 2025! This is a modern web platform built to showcase and manage game jam projects, featuring a dynamic project gallery, jury information, and sponsor highlights.
+![Project Preview](https://i.postimg.cc/Xq8y1srQ/postspark-export-2025-03-24-15-29-21.png)
+
+Welcome to my candidacy for the Vibe Coding Game Jam 2025! I have developed this modern web platform to showcase and manage game jam projects, featuring a dynamic project gallery, jury information, and sponsor highlights.
 
 ## ✨ Features
 
