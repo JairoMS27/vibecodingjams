@@ -16,7 +16,6 @@ Welcome to my candidacy for the Vibe Coding Game Jam 2025! I have developed this
 ## 🛠️ Tech Stack
 
 - [Astro](https://astro.build/) - Fast and modern static site generator
-- [React](https://reactjs.org/) - UI components and interactivity
 - [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
 - [Supabase](https://supabase.com/) - Backend and database
 - [Framer Motion](https://www.framer.com/motion/) - Animations
